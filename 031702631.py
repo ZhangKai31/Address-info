@@ -1,27 +1,33 @@
+#coding = utf-8
 import re
 import json
 import requests
 from lxml import etree
 
 url = "https://restapi.amap.com/v3/geocode/geo?output=XML"
-str = input("请输入：")
-#str = "小陈,广东省东莞市凤岗13965231525镇凤平路13号"
+input_str = input()
+#input_str = "小陈,广东省东莞市凤岗13965231525镇凤平路13号"
 #http = 0,地址完整；http = 1,调用API补齐地址
 http = 0
 
-name = re.match(r'(.+)(?=,)',str).group()
-phone = re.search(r'\d{11,}',str).group()
-add = re.findall(r'(?<=,).+',str)
+name = re.match(r'(.+)(?=,)',input_str).group()
+phone = re.search(r'\d{11,}',input_str).group()
+add = re.findall(r'(?<=,).+',input_str)
 #print(name)
 #print(phone)
 addr = add[0].replace(phone,"")
 #print(addr)
 
+#检查group()是否可能None
 province = re.match(r'.+省',addr)
 if province == None:
-    province = re.match(r'(.+?)市',addr)
+    province = re.match(r'(.+?)(?=市)',addr)
+    if province == None:
+        http = 1
+    else:
+        province = province.group()
     if province == "北京" or province == "天津" or province == "重庆" or province == "上海":
-        province = province.groups()[0]
+        province = province
     else:
         http = 1
 else:
@@ -126,6 +132,17 @@ if location == None:
         location = ""
 else:
     location = location.group()
+
+#print(type(province))
+#print(type(location))
+if type(province) == list:
+    province = str(province[0])
+if type(city) == list:
+    city = str(city[0])
+if type(district) == list:
+    district = str(district[0])
+if type(street) == list:
+    street = str(street[0])
 
 info = {
     "姓名":name,
