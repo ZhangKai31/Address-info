@@ -167,6 +167,3 @@ def main():
     json_info = json.dumps(info,ensure_ascii=False)
     print(json_info)
     pass
-
-if __name__ == "__main__":
-    main()
